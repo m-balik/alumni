@@ -1,0 +1,20 @@
+# secrets — .env NEVER goes to GitHub (week 05)
+.env
+*.local.env
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+logs/
+*.log
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# docker volume leftovers
+db-data/
