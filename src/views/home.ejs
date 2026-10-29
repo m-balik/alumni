@@ -1,0 +1,30 @@
+<%- include('partials/head') %>
+
+<section class="hero">
+  <h1>Alumni Tracking System</h1>
+  <p>One system, built week by week: routing, CRUD, MVC, a real database, and relations.</p>
+  <p class="actions">
+    <a class="btn" href="/users">Browse alumni</a>
+    <a class="btn ghost" href="/jobs">Job postings</a>
+    <a class="btn ghost" href="/api/swagger">Try the API</a>
+  </p>
+</section>
+
+<section class="cards">
+  <div class="card"><span class="num"><%= counts.users %></span><span>users</span></div>
+  <div class="card"><span class="num"><%= counts.alumni %></span><span>alumni</span></div>
+  <div class="card"><span class="num"><%= counts.jobs %></span><span>job postings</span></div>
+</section>
+
+<% if (announcements.length) { %>
+<section>
+  <h2>Latest announcements</h2>
+  <ul class="plain">
+    <% announcements.forEach(function (a) { %>
+      <li><strong><%= a.title %></strong> — <%= a.body %></li>
+    <% }); %>
+  </ul>
+</section>
+<% } %>
+
+<%- include('partials/foot') %>

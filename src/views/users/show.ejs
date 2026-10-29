@@ -1,0 +1,59 @@
+<%- include('../partials/head') %>
+
+<div class="page-head">
+  <h1><%= user.name %></h1>
+  <a class="btn ghost" href="/users/<%= user.id %>/edit">Edit</a>
+</div>
+
+<%- include('../partials/flash') %>
+
+<ul class="plain meta">
+  <li><strong>E-mail:</strong> <%= user.email %></li>
+  <li><strong>Department:</strong> <%= user.department || '—' %></li>
+  <li><strong>Alumnus:</strong> <%= user.is_alumni ? 'yes, class of ' + user.graduation_year : 'not yet' %></li>
+</ul>
+
+<h2>Job postings by this user <span class="muted">(<%= jobs.length %>)</span></h2>
+<% if (jobs.length) { %>
+  <table>
+    <thead><tr><th>#</th><th>Title</th><th>Company</th><th>Location</th><th>Open</th></tr></thead>
+    <tbody>
+      <% jobs.forEach(function (j) { %>
+        <tr>
+          <td><%= j.id %></td>
+          <td><a href="/jobs/<%= j.id %>"><%= j.title %></a></td>
+          <td><%= j.company %></td>
+          <td><%= j.location || '—' %></td>
+          <td><%= j.is_open ? 'open' : 'closed' %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } else { %>
+  <p class="muted">No postings yet — a LEFT JOIN still brings the user back, with an empty list.</p>
+<% } %>
+
+<h3>Add a posting</h3>
+<form class="stack narrow" method="POST" action="/users/<%= user.id %>/jobs">
+  <label>Title <input name="title" required></label>
+  <label>Company <input name="company" required></label>
+  <label>Location <input name="location"></label>
+  <label>Description <textarea name="description" rows="3"></textarea></label>
+  <button class="btn" type="submit">Post the job</button>
+</form>
+
+<h2>Applications sent <span class="muted">(<%= applications.length %>)</span></h2>
+<% if (applications.length) { %>
+  <ul class="plain">
+    <% applications.forEach(function (a) { %>
+      <li>
+        <a href="/jobs/<%= a.posting.id %>"><%= a.posting.title %></a>
+        at <%= a.posting.company %> — <span class="tag"><%= a.status %></span>
+      </li>
+    <% }); %>
+  </ul>
+<% } else { %>
+  <p class="muted">No applications yet.</p>
+<% } %>
+
+<%- include('../partials/foot') %>

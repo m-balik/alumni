@@ -1,0 +1,37 @@
+<%- include('../partials/head') %>
+
+<div class="page-head">
+  <h1>Alumni &amp; students</h1>
+  <a class="btn" href="/users/new">+ Add new</a>
+</div>
+
+<%- include('../partials/flash') %>
+
+<table>
+  <thead>
+    <tr><th>#</th><th>Name</th><th>E-mail</th><th>Department</th><th>Alumnus</th><th>Year</th><th></th></tr>
+  </thead>
+  <tbody>
+    <% users.forEach(function (u) { %>
+    <tr>
+      <td><%= u.id %></td>
+      <td><a href="/users/<%= u.id %>"><%= u.name %></a></td>
+      <td><%= u.email %></td>
+      <td><%= u.department || '—' %></td>
+      <td><%= u.is_alumni ? 'yes' : 'no' %></td>
+      <td><%= u.graduation_year || '—' %></td>
+      <td class="row-actions">
+        <a class="btn small ghost" href="/users/<%= u.id %>/edit">Edit</a>
+        <form method="POST" action="/users/<%= u.id %>?_method=DELETE" onsubmit="return confirm('Delete <%= u.name %>?')">
+          <button class="btn small danger" type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+    <% }); %>
+    <% if (!users.length) { %>
+      <tr><td colspan="7" class="muted">No users yet. The table is empty — run the seed or add one.</td></tr>
+    <% } %>
+  </tbody>
+</table>
+
+<%- include('../partials/foot') %>

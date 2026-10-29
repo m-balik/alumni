@@ -1,0 +1,28 @@
+<%- include('../partials/head') %>
+
+<div class="page-head"><h1>Job postings</h1></div>
+<%- include('../partials/flash') %>
+
+<table>
+  <thead><tr><th>#</th><th>Title</th><th>Company</th><th>Location</th><th>Posted by</th><th>Open</th><th></th></tr></thead>
+  <tbody>
+    <% jobs.forEach(function (j) { %>
+    <tr>
+      <td><%= j.id %></td>
+      <td><a href="/jobs/<%= j.id %>"><%= j.title %></a></td>
+      <td><%= j.company %></td>
+      <td><%= j.location || '—' %></td>
+      <td><% if (j.owner) { %><a href="/users/<%= j.owner.id %>"><%= j.owner.name %></a><% } else { %>—<% } %></td>
+      <td><%= j.is_open ? 'open' : 'closed' %></td>
+      <td class="row-actions">
+        <form method="POST" action="/jobs/<%= j.id %>?_method=DELETE" onsubmit="return confirm('Delete this posting?')">
+          <button class="btn small danger" type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+    <% }); %>
+    <% if (!jobs.length) { %><tr><td colspan="7" class="muted">No postings yet.</td></tr><% } %>
+  </tbody>
+</table>
+
+<%- include('../partials/foot') %>

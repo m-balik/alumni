@@ -1,0 +1,30 @@
+<%- include('../partials/head') %>
+
+<div class="page-head">
+  <h1>Announcements</h1>
+  <a class="btn" href="/announcements/new">+ Add new</a>
+</div>
+<%- include('../partials/flash') %>
+
+<table>
+  <thead><tr><th>#</th><th>Title</th><th>Body</th><th>Published</th><th></th></tr></thead>
+  <tbody>
+    <% announcements.forEach(function (a) { %>
+    <tr>
+      <td><%= a.id %></td>
+      <td><%= a.title %></td>
+      <td><%= a.body %></td>
+      <td><%= a.is_published ? 'yes' : 'no' %></td>
+      <td class="row-actions">
+        <a class="btn small ghost" href="/announcements/<%= a.id %>/edit">Edit</a>
+        <form method="POST" action="/announcements/<%= a.id %>?_method=DELETE">
+          <button class="btn small danger" type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+    <% }); %>
+    <% if (!announcements.length) { %><tr><td colspan="5" class="muted">No announcements yet.</td></tr><% } %>
+  </tbody>
+</table>
+
+<%- include('../partials/foot') %>

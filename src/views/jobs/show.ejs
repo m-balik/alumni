@@ -1,0 +1,37 @@
+<%- include('../partials/head') %>
+
+<div class="page-head">
+  <h1><%= job.title %></h1>
+  <span class="tag"><%= job.is_open ? 'open' : 'closed' %></span>
+</div>
+<%- include('../partials/flash') %>
+
+<ul class="plain meta">
+  <li><strong>Company:</strong> <%= job.company %></li>
+  <li><strong>Location:</strong> <%= job.location || '—' %></li>
+  <li><strong>Posted by:</strong>
+    <% if (job.owner) { %><a href="/users/<%= job.owner.id %>"><%= job.owner.name %></a><% } else { %>—<% } %>
+  </li>
+</ul>
+
+<% if (job.description) { %><p><%= job.description %></p><% } %>
+
+<h2>Applicants <span class="muted">(<%= applicants.length %>)</span></h2>
+<% if (applicants.length) { %>
+  <table>
+    <thead><tr><th>Name</th><th>E-mail</th><th>Status</th></tr></thead>
+    <tbody>
+      <% applicants.forEach(function (a) { %>
+        <tr>
+          <td><a href="/users/<%= a.applicant.id %>"><%= a.applicant.name %></a></td>
+          <td><%= a.applicant.email %></td>
+          <td><span class="tag"><%= a.status %></span></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } else { %>
+  <p class="muted">Nobody has applied yet. The applicants cannot live inside this table — they live in <code>applications</code>.</p>
+<% } %>
+
+<%- include('../partials/foot') %>

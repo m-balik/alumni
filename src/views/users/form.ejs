@@ -1,0 +1,33 @@
+<%- include('../partials/head') %>
+
+<h1><%= user && user.id ? 'Edit user' : 'New user' %></h1>
+
+<% if (errors) { %><p class="flash error"><%= errors %></p><% } %>
+
+<form class="stack" method="POST"
+      action="<%= user && user.id ? '/users/' + user.id + '?_method=PATCH' : '/users' %>">
+  <label>Name
+    <input name="name" required value="<%= user ? (user.name || '') : '' %>">
+  </label>
+  <label>E-mail
+    <input name="email" type="email" required value="<%= user ? (user.email || '') : '' %>">
+  </label>
+  <label>Department
+    <input name="department" value="<%= user ? (user.department || '') : '' %>">
+  </label>
+  <label class="inline">
+    <input type="checkbox" name="isAlumni" value="true"
+      <%= user && (user.is_alumni || user.isAlumni === 'true') ? 'checked' : '' %>>
+    Graduated (alumnus)
+  </label>
+  <label>Graduation year
+    <input name="graduationYear" type="number" min="1950" max="2100"
+      value="<%= user ? (user.graduation_year || user.graduationYear || '') : '' %>">
+  </label>
+  <div class="actions">
+    <button class="btn" type="submit">Save</button>
+    <a class="btn ghost" href="/users">Cancel</a>
+  </div>
+</form>
+
+<%- include('../partials/foot') %>

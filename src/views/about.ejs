@@ -1,0 +1,24 @@
+<%- include('partials/head') %>
+<h1>About this project</h1>
+<p>
+  The Alumni Tracking System is the term project of <strong>Web Programming</strong>
+  (Istanbul University, Management Information Systems, Fall 2026). It keeps a register of
+  students and graduates, lets alumni publish job postings, and lets users apply to them.
+</p>
+
+<h2>How it is built</h2>
+<ul>
+  <li><strong>Back end:</strong> Node.js with Express — one process, non-blocking I/O, one language on both sides.</li>
+  <li><strong>Database:</strong> PostgreSQL — real foreign keys, real unique constraints, strict types.</li>
+  <li><strong>ORM:</strong> Sequelize — it writes the SQL, and the SQL stays readable.</li>
+  <li><strong>Views:</strong> EJS — HTML for people, JSON for programs, one model behind both.</li>
+  <li><strong>Everything runs with:</strong> <code>docker compose up</code>.</li>
+</ul>
+
+<h2>Weakness of each choice</h2>
+<ul>
+  <li>Node.js: a single thread — one heavy CPU task blocks every other request.</li>
+  <li>PostgreSQL: heavier to set up and to change than a document store; every change needs a migration.</li>
+</ul>
+
+<%- include('partials/foot') %>

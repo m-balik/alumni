@@ -1,0 +1,287 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Alumni Tracking System API",
+    "version": "1.0.0",
+    "description": "Web Programming term project, Istanbul University MIS, Fall 2026. Every endpoint of the system, listed and testable."
+  },
+  "servers": [{ "url": "/", "description": "this server" }],
+  "tags": [
+    { "name": "health" },
+    { "name": "users" },
+    { "name": "jobs" },
+    { "name": "applications" },
+    { "name": "announcements" },
+    { "name": "week 02" }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": ["health"],
+        "summary": "Is the system up?",
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "example": { "status": "ok", "uptime": 12.4, "database": "up", "timestamp": "2026-10-27T09:00:00.000Z" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/users": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Every user",
+        "responses": {
+          "200": {
+            "description": "the list",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/User" } } } }
+          }
+        }
+      },
+      "post": {
+        "tags": ["users"],
+        "summary": "Create a user",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserInput" } } }
+        },
+        "responses": {
+          "201": { "description": "created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } } },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      }
+    },
+
+    "/api/users/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": {
+        "tags": ["users"],
+        "summary": "One user, with their job postings inside (include / LEFT JOIN)",
+        "responses": {
+          "200": { "description": "the user", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserWithJobs" } } } },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["users"],
+        "summary": "Replace the whole user",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserInput" } } } },
+        "responses": {
+          "200": { "description": "replaced" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "patch": {
+        "tags": ["users"],
+        "summary": "Change only the fields you send",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "example": { "department": "Management Information Systems" } } }
+        },
+        "responses": {
+          "200": { "description": "updated" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      },
+      "delete": {
+        "tags": ["users"],
+        "summary": "Remove a user (RESTRICT: 409 while they still have postings)",
+        "responses": {
+          "204": { "description": "deleted, no body" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      }
+    },
+
+    "/api/users/{id}/jobs": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": {
+        "tags": ["jobs"],
+        "summary": "The job postings of this user (nested route)",
+        "responses": {
+          "200": { "description": "the list", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/JobPosting" } } } } },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "post": {
+        "tags": ["jobs"],
+        "summary": "Post a job as this user — the URL says whose posting it is",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "example": { "title": "Junior Developer", "company": "Acme", "location": "İstanbul" } } }
+        },
+        "responses": {
+          "201": { "description": "created" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+
+    "/api/users/{id}/applications": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": {
+        "tags": ["applications"],
+        "summary": "Where this user applied",
+        "responses": {
+          "200": { "description": "the list" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+
+    "/api/jobs": {
+      "get": { "tags": ["jobs"], "summary": "Every job posting", "responses": { "200": { "description": "the list" } } }
+    },
+
+    "/api/jobs/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["jobs"], "summary": "One posting", "responses": { "200": { "description": "the posting" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "patch": {
+        "tags": ["jobs"],
+        "summary": "Change part of a posting",
+        "requestBody": { "required": true, "content": { "application/json": { "example": { "isOpen": false } } } },
+        "responses": { "200": { "description": "updated" }, "404": { "$ref": "#/components/responses/NotFound" } }
+      },
+      "delete": { "tags": ["jobs"], "summary": "Remove a posting (its applications go with it)", "responses": { "204": { "description": "deleted" }, "404": { "$ref": "#/components/responses/NotFound" } } }
+    },
+
+    "/api/jobs/{id}/applications": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["applications"], "summary": "The applicants of this posting", "responses": { "200": { "description": "the list" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "post": {
+        "tags": ["applications"],
+        "summary": "Apply to this posting — 409 the second time",
+        "requestBody": { "required": true, "content": { "application/json": { "example": { "userId": 3 } } } },
+        "responses": {
+          "201": { "description": "applied" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      }
+    },
+
+    "/api/jobs/{id}/applications/{userId}": {
+      "parameters": [
+        { "$ref": "#/components/parameters/Id" },
+        { "name": "userId", "in": "path", "required": true, "schema": { "type": "integer" } }
+      ],
+      "delete": { "tags": ["applications"], "summary": "Withdraw an application", "responses": { "204": { "description": "withdrawn" }, "404": { "$ref": "#/components/responses/NotFound" } } }
+    },
+
+    "/api/announcements": {
+      "get": { "tags": ["announcements"], "summary": "Every announcement", "responses": { "200": { "description": "the list" } } },
+      "post": {
+        "tags": ["announcements"],
+        "summary": "Create an announcement",
+        "requestBody": { "required": true, "content": { "application/json": { "example": { "title": "Alumni meetup", "body": "Beyazıt campus, 18:00" } } } },
+        "responses": { "201": { "description": "created" }, "400": { "$ref": "#/components/responses/BadRequest" } }
+      }
+    },
+
+    "/api/announcements/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["announcements"], "summary": "One announcement", "responses": { "200": { "description": "ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "patch": { "tags": ["announcements"], "summary": "Change part of it", "responses": { "200": { "description": "updated" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "delete": { "tags": ["announcements"], "summary": "Remove it", "responses": { "204": { "description": "deleted" }, "404": { "$ref": "#/components/responses/NotFound" } } }
+    },
+
+    "/ok": { "get": { "tags": ["week 02"], "summary": "answers ok (text/plain)", "responses": { "200": { "description": "ok" } } } },
+    "/hello": { "get": { "tags": ["week 02"], "summary": "answers Hello, World!", "responses": { "200": { "description": "ok" } } } },
+    "/hello/{name}": {
+      "get": {
+        "tags": ["week 02"],
+        "summary": "a wildcard: /hello/Emre answers Hello, Emre!",
+        "parameters": [{ "name": "name", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "ok" } }
+      }
+    },
+    "/sum/{a}/{b}": {
+      "get": {
+        "tags": ["week 02"],
+        "summary": "a path segment is text: /sum/3/4 answers 7, /sum/3/banana answers 400",
+        "parameters": [
+          { "name": "a", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "b", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "the sum" }, "400": { "$ref": "#/components/responses/BadRequest" } }
+      }
+    }
+  },
+
+  "components": {
+    "parameters": {
+      "Id": { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "a path parameter" }
+    },
+    "responses": {
+      "BadRequest": { "description": "your mistake — the data is invalid", "content": { "application/json": { "example": { "error": "email is required" } } } },
+      "NotFound": { "description": "nothing is there", "content": { "application/json": { "example": { "error": "User 999 not found" } } } },
+      "Conflict": { "description": "it exists already", "content": { "application/json": { "example": { "error": "A user with this email already exists" } } } }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "name": { "type": "string", "example": "Ada Yılmaz" },
+          "email": { "type": "string", "example": "ada@ogr.iu.edu.tr" },
+          "isAlumni": { "type": "boolean", "example": true },
+          "graduationYear": { "type": "integer", "nullable": true, "example": 2019 },
+          "department": { "type": "string", "nullable": true, "example": "Management Information Systems" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "UserWithJobs": {
+        "allOf": [
+          { "$ref": "#/components/schemas/User" },
+          { "type": "object", "properties": { "jobs": { "type": "array", "items": { "$ref": "#/components/schemas/JobPosting" } } } }
+        ]
+      },
+      "UserInput": {
+        "type": "object",
+        "required": ["name", "email"],
+        "properties": {
+          "name": { "type": "string", "example": "Elif Kaya" },
+          "email": { "type": "string", "example": "elif.kaya@ogr.iu.edu.tr" },
+          "isAlumni": { "type": "boolean", "example": true },
+          "graduationYear": { "type": "integer", "example": 2024 },
+          "department": { "type": "string", "example": "Management Information Systems" }
+        }
+      },
+      "JobPosting": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 10 },
+          "userId": { "type": "integer", "example": 1 },
+          "title": { "type": "string", "example": "Backend Intern" },
+          "company": { "type": "string", "example": "Acme" },
+          "location": { "type": "string", "nullable": true, "example": "İstanbul" },
+          "description": { "type": "string", "nullable": true },
+          "isOpen": { "type": "boolean", "example": true },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Application": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "userId": { "type": "integer" },
+          "jobPostingId": { "type": "integer" },
+          "status": { "type": "string", "enum": ["applied", "interview", "offer", "rejected"] },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

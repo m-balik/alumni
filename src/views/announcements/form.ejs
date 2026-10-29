@@ -1,0 +1,20 @@
+<%- include('../partials/head') %>
+
+<h1><%= announcement && announcement.id ? 'Edit announcement' : 'New announcement' %></h1>
+<% if (errors) { %><p class="flash error"><%= errors %></p><% } %>
+
+<form class="stack" method="POST"
+      action="<%= announcement && announcement.id ? '/announcements/' + announcement.id + '?_method=PATCH' : '/announcements' %>">
+  <label>Title <input name="title" required value="<%= announcement ? (announcement.title || '') : '' %>"></label>
+  <label>Body <textarea name="body" rows="5" required><%= announcement ? (announcement.body || '') : '' %></textarea></label>
+  <label class="inline">
+    <input type="checkbox" name="isPublished" value="true"
+      <%= !announcement || announcement.is_published ? 'checked' : '' %>> Published
+  </label>
+  <div class="actions">
+    <button class="btn" type="submit">Save</button>
+    <a class="btn ghost" href="/announcements">Cancel</a>
+  </div>
+</form>
+
+<%- include('../partials/foot') %>
