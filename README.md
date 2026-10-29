@@ -40,7 +40,7 @@ delete rule, the status codes — are mine, and I can defend every line.
 You need **Docker** and **Docker Compose**. Nothing else.
 
 ```bash
-git clone https://github.com/<your-username>/alumni.git
+git clone https://github.com/m-balik/alumni.git
 cd alumni
 cp .env.example .env         # then open .env and set DB_PASSWORD
 docker compose up --build
@@ -190,12 +190,12 @@ curl http://localhost:3000/api/health
 
 curl -X POST http://localhost:3000/api/users \
   -H "Content-Type: application/json" \
-  -d '{"name":"Elif Kaya","email":"elif.kaya@ogr.iu.edu.tr","isAlumni":true,"graduationYear":2024}'
+  -d '{"name":"Jhon Doe","email":"jhon.doe@ogr.iu.edu.tr","isAlumni":true,"graduationYear":2024}'
 
 # the same email again -> 409
 curl -i -X POST http://localhost:3000/api/users \
   -H "Content-Type: application/json" \
-  -d '{"name":"Someone Else","email":"elif.kaya@ogr.iu.edu.tr"}'
+  -d '{"name":"Someone Else","email":"jhon.doe@ogr.iu.edu.tr"}'
 
 # a posting, owned by user 1 — the URL says whose it is
 curl -X POST http://localhost:3000/api/users/1/jobs \
